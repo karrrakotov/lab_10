@@ -18,10 +18,7 @@ def cylinder(r, h, full=True):
 
     s_cylinder = 2 * math.pi * r * h
 
-
-    c = input('Получить боковую площадь - side, или полную - full - ')
-
-    if c == 'full':
+    if full:
         return s_cylinder + 2 * circle(r)
     else:
         print(s_cylinder)
@@ -32,5 +29,6 @@ if __name__ == '__main__':
     a = float(input("Введите радиус: "))
     b = float(input("Введите высоту: "))
 
-    s = cylinder(a, b)
+    c = input("side or full?")
+    s = cylinder(a, b, full=(c == 'full'))
     print(s)
