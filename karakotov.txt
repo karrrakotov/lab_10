@@ -1,0 +1,1 @@
+[{"name": "karakotov", "group": "ivt", "marks": [5, 5, 5, 5, 5]}]
