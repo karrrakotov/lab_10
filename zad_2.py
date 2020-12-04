@@ -12,26 +12,25 @@ import math
 #   случае к площади боковой поверхности цилиндра должен добавляться удвоенный результат
 #   вычислений функции circle().
 
-def cylinder():
-    def circle():
-        result = math.pi * r ** 2
-        return result
+def cylinder(r, h, full=True):
+    def circle(r):
+        return math.pi * (r ** 2)
 
     s_cylinder = 2 * math.pi * r * h
-    s_circle = s_cylinder + 2 * (math.pi * r ** 2)
 
-    a = input('Получить боковую площадь - 1, или полную - 2? - ')
-    if a == '1':
+
+    c = input('Получить боковую площадь - side, или полную - full - ')
+
+    if c == 'full':
+        return s_cylinder + 2 * circle(r)
+    else:
         print(s_cylinder)
-    elif a == '2':
-        circle()
-        full = s_circle
-        print(full)
 
 
 if __name__ == '__main__':
     s_circle = 0
-    r = float(input("Введите радиус: "))
-    h = float(input("Введите высоту: "))
+    a = float(input("Введите радиус: "))
+    b = float(input("Введите высоту: "))
 
-    cylinder()
+    s = cylinder(a, b)
+    print(s)

@@ -7,6 +7,7 @@
 
 def mult():
     while True:
+        p = 1
         a = float(input("Введите число а: "))
         b = float(input("Введите число b: "))
 
@@ -14,8 +15,9 @@ def mult():
             print("Работа функции прекращена.")
             break
 
-        m = a * b
-        print(f"Результат умножения: {m}")
+        p *= a
+        p *= b
+        print(f"Результат умножения: {p}")
 
 
 if __name__ == '__main__':
