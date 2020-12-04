@@ -1,54 +1,50 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
+from datetime import date
 import json
-
-#   Использовать словарь, содержащий следующие ключи: название пункта назначения; номер
-#   поезда; время отправления. Написать программу, выполняющую следующие действия: ввод
-#   с клавиатуры данных в список, состоящий из словарей заданной структуры; записи должны
-#   быть упорядочены по времени отправления поезда; вывод на экран информации о поездах,
-#   направляющихся в пункт, название которого введено с клавиатуры; если таких поездов нет,
-#   выдать на дисплей соответствующее сообщение.
+import sys
 
 
-def n_add():
-    location = input("Название пункта назначения: ")
-    train = int(input("Номер поезда: "))
-    time = input("Время отправления: ")
-
+def add(staff, location, train, time):
+    # Создать словарь.
     train = {
         'location': location,
         'train': train,
         'time': time,
     }
 
-    trains.append(train)
-    if len(trains) > 1:
-        trains.sort(key=lambda item: item.get('train', ''))
+    # Добавить словарь в список.
+    staff.append(train)
+    # Отсортировать список в случае необходимости.
+    if len(staff) > 1:
+        staff.sort(key=lambda item: item.get('location', ''))
 
 
-def n_list():
+def list(staff):
+    table = []
+    # Заголовок таблицы.
     line = '+-{}-+-{}-+-{}-+-{}-+'.format(
         '-' * 4,
         '-' * 30,
         '-' * 20,
-        '-' * 17
+        '-' * 8
     )
-    print(line)
-    print(
-        '| {:^4} | {:^30} | {:^20} | {:^17} |'.format(
+    table.append(line)
+    table.append(
+        '| {:^4} | {:^30} | {:^20} | {:^8} |'.format(
             "№",
             "Пункт назначения",
             "Номер поезда",
             "Время отправления"
         )
     )
-    print(line)
+    table.append(line)
 
+    # Вывести данные о всех сотрудниках.
     for idx, train in enumerate(trains, 1):
-        print(
-            '| {:>4} | {:<30} | {:<20} | {:>17} |'.format(
+        table.append(
+            '| {:>4} | {:<30} | {:<20} | {:>8} |'.format(
                 idx,
                 train.get('location', ''),
                 train.get('train', ''),
@@ -56,86 +52,94 @@ def n_list():
             )
         )
 
-    print(line)
+    table.append(line)
+
+    return '\n'.join(table)
 
 
-def n_select():
-    parts = command.split(' ', maxsplit=2)
+def select(staff, period):
 
+    # Инициализировать результат.
+    result = []
     number = str(parts[1])
-
+    # Проверить сведения работников из списка.
     count = 0
     for train in trains:
         if train.get('location') == number:
             count += 1
-            print('Пункт назначения:', train.get('location', ''))
-            print('Номер поезда:', train.get('train', ''))
-            print('Время отправления:', train.get('time', ''))
 
-    if count == 0:
-        print("Таких мест нет!")
+    return result
 
 
-def n_load():
-    # Разбить команду на части для выделения имени файла.
-    parts = command.split(' ', maxsplit=1)
-
-    # Прочитать данные из файла JSON.
-    with open(parts[1], 'r') as f:
-        global trains
-        trains = json.load(f)
+def load(filename):
+    with open(filename, 'r') as fin:
+        return json.load(fin)
 
 
-def n_save():
-    # Разбить команду на части для выделения имени файла.
-    parts = command.split(' ', maxsplit=1)
-
-    # Сохранить данные в файл JSON.
-    with open(parts[1], 'w') as f:
-        json.dump(trains, f)
-
-
-def n_help():
-    print("Список команд:\n")
-    print("add - добавить поезд;")
-    print("list - вывести список поездов;")
-    print("select <номер поезда> - запросить информацию о выбранном поезде;")
-    print("help - отобразить справку;")
-    print("load <имя файла> - загрузить данные из файла;")
-    print("save <имя файла> - сохранить данные в файл;")
-    print("exit - завершить работу с программой.")
-
-
-def n_error():
-    print(f"Неизвестная команда {command}", file=sys.stderr)
+def save(staff, filename):
+    with open(filename, 'w') as fout:
+        json.dump(staff, fout)
 
 
 if __name__ == '__main__':
+    # Список работников.
     trains = []
 
+    # Организовать бесконечный цикл запроса команд.
     while True:
+        # Запросить команду из терминала.
         command = input(">>> ").lower()
 
+        # Выполнить действие в соответствие с командой.
         if command == 'exit':
             break
 
         elif command == 'add':
-            n_add()
+            # Запросить данные о работнике.
+            location = input("Название пункта назначения: ")
+            train = int(input("Номер поезда: "))
+            time = input("Время отправления: ")
+
+            add(trains, location, train, time)
 
         elif command == 'list':
-            n_list()
+            print(list(trains))
 
         elif command.startswith('select '):
-            n_select()
+            # Разбить команду на части для выделения номера года.
+            parts = command.split(maxsplit=1)
+            # Получить список работников.
+            selected = select(train, str(parts[1]))
+
+            # Вывод списка работников.
+            if selected:
+                for idx, location in enumerate(selected, 1):
+                    print('{:>4}: {}'.format(idx, location.get('location', '')))
+            else:
+                print("Таких мест нет!")
 
         elif command.startswith('load '):
-            n_load()
+            # Разбить команду на части для имени файла.
+            parts = command.split(maxsplit=1)
+            # Загрузить данные из файла
+            trains = load(parts[1])
 
         elif command.startswith('save '):
-            n_save()
+            # Разбить команду на части для имени файла.
+            parts = command.split(maxsplit=1)
+            # Сохранить данные в файл
+            save(trains, parts[1])
 
         elif command == 'help':
-            n_help()
+            # Вывести справку о работе с программой.
+            print("Список команд:\n")
+            print("add - добавить пункт назначения;")
+            print("list - вывести список работников;")
+            print("select <стаж> - запросить работников со стажем;")
+            print("load <имя_файла> - загрузить данные из файла;")
+            print("save <имя_файла> - сохранить данные в файл;")
+            print("help - отобразить справку;")
+            print("exit - завершить работу с программой.")
 
         else:
-            n_error()
+            print(f"Неизвестная команда {command}", file=sys.stderr)
